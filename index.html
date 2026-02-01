@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.7, user-scalable=no">
+    <title>Happy Birthday!</title>
+    <link href="css2.css" rel="stylesheet">
+    <link rel="preload" href="https://fonts.gstatic.com/s/quicksand/v37/6xKtdSZaM9iE8KbpRA_hK1QN.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/dancingscript/v29/If2cXTr6YS-zF4S-kcSWSVi_sxjsohD9F50Ruu7B7y03Sup8.woff2" as="font" type="font/woff2" crossorigin>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #fff0f5;
+            --stage1-bg: #ffffff; /* Light Pink Tint */
+            --stage-yellow-bg: #000000; /* Light Yellowish Tint */
+            --primary-pink: #ff85c0;
+            --dark-pink: #ff4d94;
+            --text-color: #595959;
+            --shadow: 0 10px 40px rgba(255, 182, 193, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family:'Quicksand';
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- Global Background Particles --- */
+        .bg-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            opacity: 0.6;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        /* Rotating Stars for Stage 1 */
+        .rotating-star {
+            position: absolute;
+            font-size: 24px;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- Wrapper to hold Outside Text & Container --- */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* --- Outside Titles (Stage 2-7) --- */
+        .outside-title-area {
+            text-align: center;
+            margin-bottom: -15px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s, transform 0.5s;
+            display: none; /* Hidden by default, shown via JS */
+        }
+        .outside-title-area.visible {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
+        }
+        .outside-title-area h2 {
+            color: #ff0066;
+            font-size: 1.8rem;
+            margin-bottom: -3px;
+        }
+        .outside-title-area p {
+            color: #77022c;
+            font-size: 1rem;
+        }
+
+        /* --- Main Card Container --- */
+        .container {
+            width: 100%;
+            max-width: 500px;
+            height: 320px;
+            background: var(--stage1-bg);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            padding: 0; /* Padding handled inside stages */
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.5s ease;
+        }
+
+        /* --- Stage 1 Header (Mac Window Style) --- */
+        .mac-header {
+            position: absolute;
+            top: 0;
+            width: 82%;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .traffic-lights {
+            position: absolute;
+            bottom: 9px;
+            left: 15px;
+            display: flex;
+            gap: 4px;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .red { background: #ff5f56; }
+        .yellow { background: #ffbd2e; }
+        .green { background: #27c93f; }
+        
+        .header-title {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #77022c;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        /* --- Footer Outside Container --- */
+        .outside-footer {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            position: absolute;
+            bottom: 335px;
+        }
+
+        /* --- General Typography & Buttons --- */
+        h1 { color: #ff0066; font-size: 2rem; margin-bottom: 1px; font-weight: 800; }
+        h2 { color: var(--dark-pink); font-size: 1.8rem; margin-bottom: 10px; }
+        p { color: #000000; font-size: 1.1rem; line-height: 1.5; max-width: 600px; margin: 0 auto 15px auto; }
+
+        .btn {
+            background: #ff0066;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 5px 15px rgba(255, 77, 148, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: -5px;
+            margin-bottom: 45px;
+        }
+        .btn:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(255, 77, 148, 0.6); }
+
+        /* --- Stages Layout --- */
+        .stage {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            animation: fadeIn 0.8s ease;
+            position: relative;
+        }
+        .stage.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Stage 1 Specifics --- */
+        .cat-corner {
+            position: absolute;
+            bottom: -1px;
+            left: 8px;
+            width: 130px;
+            z-index: 10;
+            rotate: -15deg;
+        
+            /* Animation 2: Endless Head Tilt */
+            animation: 
+                catWiggle 2s ease-in-out infinite 0.8s;
+            transform-origin: bottom center;
+        }
+
+        @keyframes catWiggle {
+            0%, 100% { transform: rotate(5deg); }
+            50% { transform: rotate(-5deg); }
+        }
+
+        /* --- Stage 2: Envelope --- */
+        .envelope-wrapper {
+            position: relative;
+            top: -15px;
+            cursor: pointer;
+            transition: transform 0.3s; 
+        }
+        .envelope-wrapper:hover { transform: scale(1.02); }
+        
+        .envelope {
+            width: 250px;
+            height: 150px;
+            background: #ffb7b2;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .envelope::before { /* Left Flap */
+            content: ''; position: absolute; top: 0; left: 0;
+            border-top: 75px solid transparent; border-bottom: 75px solid transparent;
+            border-left: 115px solid #ff9e99; z-index: 2;
+        }
+        .envelope::after { /* Right Flap */
+            content: ''; position: absolute; top: 0; right: 0;
+            border-top: 75px solid transparent; border-bottom: 75px solid transparent;
+            border-right: 115px solid #ff9e99; z-index: 2;
+        }
+        .envelope-bottom { /* Bottom Flap */
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 0;
+            border-left: 120px solid transparent; border-right: 120px solid transparent;
+            border-bottom: 80px solid #ff8a85; z-index: 3;
+        }
+        .envelope-lid { /* Top Flap */
+            position: absolute; top: 0; left: 0; width: 100%; height: 0;
+            border-left: 120px solid transparent; border-right: 120px solid transparent;
+            border-top: 80px solid #ffcdd2;
+            transform-origin: top;
+            transition: transform 0.6s ease 0.2s, z-index 0.2s;
+            z-index: 4;
+        }
+        
+        .paper {
+            position: absolute;
+            width: 220px;
+            height: 140px;
+            background: #fff;
+            top: 28px;
+            transition: transform 0.8s ease 0.5s, width 0.8s ease 1s, height 0.8s ease 1s, top 0.8s ease 1s, left 0.8s ease 1s;
+            z-index: 1;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: visible;
+            font-family: 'Dancing Script', cursive; /* Handwriting font */
+        }
+        
+        /* Animation: Open Lid -> Slide Up -> Expand */
+        .envelope-wrapper.open .envelope-lid { transform: rotateX(360deg); z-index: 2; }
+        
+        .envelope-wrapper.open .paper {
+            transform: translateY(-100px); /* Move Up */
+            z-index: 5; /* Go on top of flaps */
+            
+        }
+        
+        .envelope-wrapper.open.expanded .paper {
+            width: 430px;
+            height: 250px;
+            transform: translateY(-50px);
+            border-radius: 10px;
+        }
+        .paper {opacity: 0; }
+        .envelope-wrapper.open .paper {opacity: 1;}
+        .letter-content { opacity: 0; transition: opacity 0.5s 1.5s; text-align: center; width: 100%; height: 100%; display: flex; flex-direction: column; }
+        .envelope-wrapper.open.expanded .letter-content { opacity: 1; }
+        .cat2 { opacity: 0; transition: opacity 0.5s 1.5s; }
+        .envelope-wrapper.open.expanded .cat2 { opacity: 1;  }
+
+        .deco-heart { position: absolute; font-size: 20px; color: #ff4d94; animation: pulse 2s infinite; }
+        .dh-1 { top: 0%; left: 100%; transform: translate(-50%, -50%); z-index: 5; }
+        .dh-2 { bottom: -15%; left: 0%; transform: translate(-50%, -50%); z-index: 5; }
+        .dh-3 { top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5; }
+
+        /* --- Stage 3: Cake --- */
+        .cake-container {
+            position: relative;
+            top: 15px;
+            width: 280px;
+            height: 200px;
+            margin: 10px auto;
+            user-select: none;
+            cursor: crosshair;
+        }
+        .cut-line {
+            position: absolute;
+            top: 55%; left: 0; width: 0%; height: 6px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            box-shadow: 0 0 10px #ffeb3b;
+            z-index: 10;
+            border-radius: 50%;
+        }
+
+        /* --- Stage 4: Wish --- */
+        .square-img {
+            width: 180px; height: 180px;
+            border-radius: 20px; /* Square with rounded corners */
+            object-fit: cover;
+            border: 4px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            margin-top: 45px;
+        }
+
+        /* --- Stage 5: Music Player --- */
+        .music-player-ui {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            padding: 5px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 8px;
+            margin-top: 48px;
+            position: relative;
+        }
+        .main-album-art {
+            width: 60px; height: 60px; border-radius: 12px;
+            background-size: cover; background-position: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .player-controls { flex: 1; text-align: left; }
+        .song-title { font-weight: bold; color: #333; font-size: 1.1rem; }
+        .song-artist { font-size: 0.8rem; color: #888; margin-bottom: 5px; }
+
+        .main-progress-container { width: 100%; height: 4px; background: #eee; border-radius: 4px; overflow: hidden; margin-bottom: 5px; }
+        .main-progress-bar { width: 0%; height: 100%; background: var(--dark-pink); transition: width 0.1s linear; }
+
+        .control-btns { display: flex; gap: 15px; align-items: center; position: absolute; top: 12px; right: 55px; }
+        .ctrl-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #555; transition: color 0.2s; }
+        .ctrl-btn:hover { color: var(--dark-pink); }
+        .play-btn-main { width: 30px; height: 30px; background: var(--dark-pink); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(255, 77, 148, 0.3); }
+
+        .playlist-carousel {font-family: 'Quicksand'; display: flex; gap: 15px; align-items: center; width: 100%; justify-content: center; }
+        .mini-card { width: 150px; padding: 3px; background: white; border-radius: 10px; cursor: pointer; }
+        .mini-card.active { opacity: 1; transform: scale(1.05); border: 2px solid var(--primary-pink); }
+        .mini-card.hidden{display: none;}
+        .mini-art { width: 100%; height: 100px; border-radius: 8px; background-size: cover; margin-bottom: 3px; }
+        .mini-text { font-size: 0.7rem; font-weight: bold; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+        /* --- Stage 6: Cards --- */
+        .progress-header { margin-bottom: 20px; width: 80%; }
+        .pb-container { width: 100%; height: 10px; background: #eee; border-radius: 10px; overflow: hidden; margin-top: 5px; }
+        .pb-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #ff85c0, #ff4d94); transition: width 0.5s cubic-bezier(0.4, 1.75, 0.5, 1); }
+        .pb-text { font-size: 0.9rem; color: var(--dark-pink); font-weight: 700; margin-top: 5px; }
+
+        .flip-card { width: 150px; height: 200px; perspective: 1000px; cursor: pointer; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
+        .flip-card-front { background: linear-gradient(135deg, #fff 0%, #fff0f5 100%); border: 2px solid white; }
+        .flip-card-back { background: white; transform: rotateY(180deg); border: 2px solid var(--primary-pink); }
+
+        /* Modal */
+        .modal {
+            position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            background: white; padding: 30px; border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); z-index: 50; width: 85%;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+        .modal.show { transform: translate(-50%, -50%) scale(1); }
+
+
+
+        /* Helper for hidden elements */
+        .hidden { display: none !important; }
+
+
+
+    </style>
+</head>
+<body>
+
+
+
+    <!-- Audio Player Element -->
+    <audio id="birthdayAudio" preload="none" style="display: none;"></audio>
+
+
+
+    <div class="bg-particles">
+        <div class="particle rotating-star" style="top: 10%; left: 10%;">⭐</div>
+        <div class="particle rotating-star" style="top: 20%; left: 80%; animation-delay: 1s;">✨</div>
+        <div class="particle rotating-star" style="top: 90%; left: 60%; animation-delay: 2s;">🌟</div>
+        <div class="particle" style="top: 70%; left: 90%; font-size: 20px;">🌸</div>
+        <div class="particle" style="top: 80%; left: 20%; font-size: 25px;">🍬</div>
+        <div class="particle" style="top: 15%; left: 50%; font-size: 20px;">🎂</div>
+    </div>
+
+    <div class="main-wrapper">
+
+        <div id="outside-header" class="outside-title-area">
+            <h2 id="outside-h2">Title</h2>
+            <p id="outside-p">Subtitle</p>
+        </div>
+
+        <div class="container" id="mainContainer">
+            
+            <div id="stage1" class="stage active">
+                <div class="mac-header">
+                    <div class="traffic-lights">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                    </div>
+                    <div class="header-title">Happy Birthday!</div>
+                </div>
+               
+                <img src="image/hello-kitty1.gif" style="position: relative; width: 90px; height: 80px; top: -6px; left: 180px;" alt="Kitty">
+                <h1>Happy Birthday, <br>Beautiful! 🎂✨</h1>
+                <p>Today is all about celebrating the most amazing person in my world. I've created something magical just for you...</p>
+                
+                <p id="typewriter-s1" style="font-size: 1rem; margin-top: 1px; color: #ff0066; font-weight: 700; min-height: 25px;"></p>
+                
+                <button class="btn" onclick="goToStage(2)">Let's Gooo</button>
+                
+                <img src="image/cat1.png" class="cat-corner" alt="Cat Love">
+            </div>
+
+            <div id="stage2" class="stage">
+                <div class="envelope-wrapper" onclick="openEnvelope()">
+                    <div class="deco-heart dh-3">💌</div>
+                    <div class="deco-heart dh-1">💕</div>
+                    <div class="deco-heart dh-2">💖</div>
+                    <div class="envelope">
+                        <div class="envelope-lid"></div>
+                        <div class="envelope-bottom"></div>
+                        <div class="paper">
+                            <img class="cat2" src="image/cat2.png" style="position: absolute; top: -30px; right: -25px; width: 75px; z-index: 10;" loading="lazy">
+                            <div class="letter-content">
+                                <div style="width: 100%; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="color: #77022c; font-weight: bold; font-family: 'Quicksand'; font-size: 0.9rem;">To My Birthday Princess 👑</span>
+                                </div>
+                                <div style="margin-top: 1px; text-align: left ; font-size: 1.1rem; line-height: 1.4; color: #ff0066; flex: 1;">My dearest, </div>
+                                <p style="margin-bottom: 15%; font-size: 1.1rem; line-height: 1.4; color: #161212; flex: 1;">
+                                    today marks another year of your incredible existence. You bring so much joy, laughter, and love into this world.
+                                    You deserve all the magic, all the dreams, and all the love this world has to offer.
+                                </p>
+                                <img src="image/sign.png" style="position: absolute; bottom: 40px; right: 75px; width: 50px; transform: rotate(-15deg);">
+                                <div style="margin-top: -40px; text-align: right; color: #ff0066; font-weight: bold; font-size: 1.2rem;">Forever Yours 💕</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p style="margin-top: 5px; margin-bottom: -3px; font-weight: bold; color: #77022c;">Click to open your birthday surprise ✨</p>
+                <p style="color: #ff0066; font-size: 0.9rem;">Birthday Special Delivery 🎂</p>
+
+                <button id="btn-stage2" class="btn" style="opacity: 0; pointer-events: none; margin-top: 5px; margin-bottom: -35px;" onclick="goToStage(3)">Continue It ➔</button>
+            </div>
+
+            <div id="stage3" class="stage">
+                <p style="position: absolute; font-size: 1rem; color: #77022c; top: 60px;">Draw a line across the middle of the cake to cut it ✂️</p>
+                <h3 style="position: absolute; color: #000000; top: 25px;">Cut your birthday cake, birthday girl! 🔪</h3>
+                
+                <div class="cake-container" id="cakeArea">
+                    <img src="image/cake.png" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;" alt="Cake" loading="lazy">
+                    <div class="cut-line" id="cutLine"></div>
+                    
+                    <div id="perfectCut" style="position:absolute; top: 25%; width: 100%; text-align: center; display: none; z-index: 20;">
+                        <div style="background: rgba(255,255,255,0.9); padding: 15px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                            <h3 style="color: #ff0066; margin-bottom: 5px;">Perfect Cut! 🥳</h3>
+                            <p style="font-size: 0.8rem; margin: 0;">May this year bring you everything your heart desires!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="btn-stage3" class="btn" style="position: absolute; margin-bottom: -255px; opacity: 0; pointer-events: none;" onclick="goToStage(4)">Make a Wish ➔</button>
+            </div>
+
+            <div id="stage4" class="stage">
+                <img src="image/hello-kitty2.gif" class="square-img" alt="Wish" loading="lazy">
+                <p  style="color: #ff0066; font-weight: 800; font-size: 1.1rem; margin-bottom: 2px;">Time to Make a Wish!✨</p>
+                <p style="color: #000000; font-weight: 800; font-size: 1.1rem; margin-bottom: 2px;">Close your eyes and make your birthday wish!🌟</p>
+                <p style="color: #77022c; font-size: 0.9rem; margin-top: 2px;">Think of something wonderful for your new year!</p>
+                <button class="btn" onclick="handleWish()">I've Made My Wish! 💫</button>
+            </div>
+
+            <div id="stage5" class="stage">
+                
+                <div class="music-player-ui">
+                    <div class="main-album-art" id="mainArt" style="background-image: url('image/hello kitty-spiderman1.jpeg');"></div>
+                    <div class="player-controls">
+                        <div class="song-title" id="songTitle">Select a Song</div>
+                        <div class="song-artist" id="songArtist">Birthday Vibes</div>
+                        <div class="main-progress-container">
+                            <div class="main-progress-bar" id="mainProgressBar"></div>
+                        </div>
+                        <div class="control-btns">
+                            <button class="ctrl-btn" onclick="prevSong()">⏮</button>
+                            <div class="play-btn-main" onclick="togglePlay()">▶</div>
+                            <button class="ctrl-btn" onclick="nextSong()">⏭</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="playlist-carousel">
+                    <button class="ctrl-btn" onclick="prevSong()" style="margin-right: 5px;">❮</button>
+                    
+                    <div class="mini-card" onclick="selectSong(0)" id="card0">
+                        <div class="mini-art" style="background-image: url('image/hello kitty-spiderman1.jpeg');"></div>
+                        <div class="mini-text">Dil Cheez Tujhe..</div>                      
+                        <p style="color: #77022c; font-size: 0.6rem; margin: 1px;">Because today is all about YOU, Queen!👑</p>
+                    </div>
+                    <div class="mini-card" onclick="selectSong(1)" id="card1">
+                        <div class="mini-art" style="background-image: url('image/hello kitty-spiderman2.jpeg');"></div>
+                        <div class="mini-text">Sahiba</div>
+                        <p style="color: #77022c; font-size: 0.6rem; margin: 1px;">My heart burns only for you ❤️‍🔥</p>
+                    </div>
+                    <div class="mini-card" onclick="selectSong(2)" id="card2">
+                        <div class="mini-art" style="background-image: url('image/hello kitty-spiderman3.jpeg');"></div>
+                        <div class="mini-text">Heeriye</div>
+                        <p style="color: #77022c; font-size: 0.5rem; margin: 1px;">Every beat celebrates your beautiful heart 💖</p>
+                    </div>
+                     <div class="mini-card" onclick="selectSong(3)" id="card3">
+                        <div class="mini-art" style="background-image: url('image/hello kitty-spiderman4.jpeg');"></div>
+                        <div class="mini-text">Fakira</div>
+                        <p style="color: #77022c; font-size: 0.6rem; margin: 1px;">Love hurts sweeter with you 🖤</p>
+                    </div>
+                    <div class="mini-card" onclick="selectSong(4)" id="card4">
+                        <div class="mini-art" style="background-image: url('image/hello kitty-spiderman5.jpeg');"></div>
+                        <div class="mini-text">Ishq Wala Love</div>
+                        <p style="color: #77022c; font-size: 0.6rem; margin: 1px;">Nothing but Ishq Wala Love ✨</p>
+                    </div>
+                    <div class="mini-card" onclick="selectSong(5)" id="card5">
+                        <div class="mini-art" style="background-image: url('image/hello kitty-spiderman6.jpeg');"></div>
+                        <div class="mini-text">Dil Ka Jo Haal</div>
+                        <p style="color: #77022c; font-size: 0.5rem; margin: 1px;">Here's to making this year unforgettable 💫</p>
+                    </div>
+
+
+                    <button class="ctrl-btn" onclick="nextSong()" style="margin-left: 5px;">❯</button>
+                </div>
+
+                <button class="btn" style="margin-top: 10px;" onclick="goToStage(6)">Continue to Surprises ➔</button>
+            </div>
+
+            <div id="stage6" class="stage">
+                <div class="progress-header">
+                    <div class="pb-container"><div class="pb-fill" id="cardProgress"></div></div>
+                    <div class="pb-text" id="cardProgressText">0 of 3 birthday wishes unlocked! Keep going🎉</div>
+                </div>
+
+                <div class="cards-grid" style="display: flex; gap: 5px;">
+                    <div class="flip-card" onclick="flipCard(this)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="image/hello-kitty3.gif" style="width: 180px; margin-bottom:10px;" loading="lazy">
+                                <p style="margin: 1px; font-size:0.8rem; margin-top:5px;">Tap to open</p>
+                            </div>
+                            <div class="flip-card-back">                             
+                                <p style="font-size: 0.8rem; padding: 0 5px;">Happy Birthday to the girl who makes every day a celebration!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="flipCard(this)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="image/hello-kitty4.gif" style="width: 150px; margin-bottom:10px;" loading="lazy">
+                                <p style="margin: 1px; font-size:0.8rem; margin-top:5px;">Tap to open</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <p style="font-size: 0.8rem; padding: 0 5px;">Another year of being absolutely beautiful and perfect.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card" onclick="flipCard(this)">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <img src="image/hello-kitty5.gif" style="width: 150px; margin-bottom:10px;" loading="lazy">
+                                <p style="margin: 1px; font-size:0.8rem; margin-top:5px;">Tap to open</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <p style="font-size: 0.8rem; padding: 0 5px;">May this year bring you endless joy and love!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="cardModal" class="modal">
+                    <div style="font-size: 40px;">🎉</div>
+                    <h3 style="color: var(--dark-pink); margin: 10px 0;">All Birthday Wishes Unlocked!</h3>
+                    <p>Each wish carries my love and hopes for your amazing new year ahead.</p>
+                    <button class="btn" style="margin-top: 15px;" onclick="goToStage(7)">Open Final Birthday Letter 💌</button>
+                </div>
+            </div>
+
+            <div id="stage7" class="stage">
+                <div id="final-main-content">
+                    <div style="background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 10px; margin-top: 50px;position: relative;">
+                         <img src="image/cat-love.gif" style="position:absolute; top:-20px; right:-20px; width:50px;" loading="lazy">
+                        <p style="font-family: 'Dancing Script', cursive; font-size: 1.4rem; color: #555;">
+                            "My dearest birthday princess, may this new year bring you everything your heart desires and more joy than you can imagine. <br>Happy Birthday, my love. You deserve the world and so much more." 🐻
+                        </p>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button id="sealBtn" class="btn" onclick="sealLetter()">Seal the Letter ✉️</button>
+                    </div>
+                </div>
+
+                <div id="sealedContent" style="display: none; flex-direction: column; align-items: center; animation: fadeIn 1s;">
+                    <div style="font-size: 70px;margin-top: 25; margin-bottom: -5px; animation: pulse 2s infinite;">💌</div>
+                    <h3 style="margin: 10px 0; color: var(--dark-pink);">Birthday Letter Sealed with Love</h3>
+                    <p>Happy Birthday, My Everything 🎉</p>
+                    <p style="font-size: 0.8rem; color: #aaa; margin-top: 5px;">Forever Yours, Happy Birthday! <br>Friday, January 23, 2026</p>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 15px; margin-bottom: -20px;">
+                        <button class="btn" onclick="location.reload()">Experience Magic Again ✨</button>
+                        <button class="btn" style="background: #ff4d4d;" onclick="sendKisses()">Send Birthday Kisses 💋</button>
+                    </div>
+                </div>
+            </div>
+
+        </div> <div id="footer-s1" class="outside-footer">Made with endless love for your special day 💕</div>
+
+    </div>
+
+    <script>
+
+        // --- CONFETTI LOGIC (Using canvas-confetti library) ---
+        function launchConfetti() {
+            confetti({
+                particleCount: 150,
+                spread: 80,
+                origin: { y: 0 }
+            });
+        }
+
+        function burstConfetti() {
+            confetti({
+                particleCount: 200,
+                spread: 100,
+                origin: { y: 0 }
+            });
+        }
+
+        launchConfetti(); // Stage 1 launch
+
+        // --- STAGE NAVIGATION LOGIC ---
+        const stagesData = {
+            1: { color: '#fff5f7', title: '', sub: '', showOutside: false },
+            2: { color: '#fff7e7', title: 'A Birthday Love Letter 💌', sub: 'From my heart to the birthday queen', showOutside: true },
+            3: { color: '#fff7e7', title: "It's Cake Time! 🎂", sub: 'Make your birthday wish come true!', showOutside: true },
+            4: { color: '#fff7e7', title: "It's Cake Time! 🎂", sub: 'Make your birthday wish come true!', showOutside: true }, // Keeping same title as per video flow
+            5: { color: '#fff7e7', title: 'Birthday Vibes Playlist 🎵', sub: 'Songs to celebrate your special day', showOutside: true },
+            6: { color: '#fff7e7', title: 'Birthday Wishes Cards 🎁', sub: 'Click each card to reveal a birthday message!', showOutside: true },
+            7: { color: '#fff7e7', title: 'Final Birthday Letter', sub: 'A special message sealed with love 💕', showOutside: true }
+        };
+
+        function goToStage(num) {
+            const currentStage = document.querySelector('.stage.active');
+            if(currentStage) {
+                // Pause audio if leaving stage 5
+                if(currentStage.id === 'stage5') {
+                    const audio = document.getElementById('birthdayAudio');
+                    audio.pause();
+                    isPlaying = false;
+                }
+                currentStage.classList.remove('active');
+            }
+
+            // Background & Title Logic
+            const data = stagesData[num];
+            document.getElementById('mainContainer').style.background = data.color;
+
+            const outHeader = document.getElementById('outside-header');
+            if(data.showOutside) {
+                outHeader.classList.add('visible');
+                document.getElementById('outside-h2').innerText = data.title;
+                document.getElementById('outside-p').innerText = data.sub;
+                document.getElementById('footer-s1').style.display = 'none'; // Hide Stage 1 footer
+            } else {
+                outHeader.classList.remove('visible');
+            }
+
+            setTimeout(() => {
+                document.getElementById('stage' + num).classList.add('active');
+                if(num === 5) startMusicPreview();
+            }, 100);
+        }
+
+        // --- STAGE 1: TYPEWRITER ---
+        const textS1 = "Ready for your birthday surprise?";
+        let iS1 = 0;
+        function typeS1() {
+            if (iS1 < textS1.length) {
+                document.getElementById("typewriter-s1").innerHTML += textS1.charAt(iS1);
+                iS1++;
+                setTimeout(typeS1, 50);
+            }
+        }
+        setTimeout(typeS1, 1000);
+
+        // --- STAGE 2: ENVELOPE ---
+        function openEnvelope() {
+            const wrapper = document.querySelector('.envelope-wrapper');
+            if (!wrapper.classList.contains('open')) {
+                wrapper.classList.add('open');
+                
+                // Expansion animation
+                setTimeout(() => {
+                    wrapper.classList.add('expanded');
+                }, 800);
+
+                setTimeout(() => {
+                    document.getElementById('btn-stage2').style.opacity = '1';
+                    document.getElementById('btn-stage2').style.pointerEvents = 'all';
+                }, 2000);
+            }
+        }
+
+        // --- STAGE 3: CAKE CUT ---
+        let isDrawing = false;
+        const cakeArea = document.getElementById('cakeArea');
+        const cutLine = document.getElementById('cutLine');
+
+        // Mouse events for desktop
+        cakeArea.addEventListener('mousedown', () => { isDrawing = true; cutLine.style.width = '0%'; });
+        cakeArea.addEventListener('mouseup', () => { if(isDrawing) finishCut(); });
+
+        // Touch events for mobile
+        cakeArea.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isDrawing = true;
+            cutLine.style.width = '0%';
+        });
+        cakeArea.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if(isDrawing) finishCut();
+        });
+
+        function finishCut() {
+            isDrawing = false;
+            cutLine.style.width = '100%';
+            cutLine.style.transition = 'width 1s ease-out';
+            launchConfetti();
+
+            setTimeout(() => {
+                document.getElementById('perfectCut').style.display = 'block';
+                document.getElementById('btn-stage3').style.opacity = '1';
+                document.getElementById('btn-stage3').style.pointerEvents = 'all';
+            }, 1000);
+        }
+        // Simulating draw for mobile/click
+        cakeArea.addEventListener('click', () => {
+             cutLine.style.width = '0%';
+             setTimeout(() => finishCut(), 100);
+        });
+
+        // --- STAGE 4: WISH ---
+        function handleWish() {           
+            setTimeout(() => goToStage(5), 1000);
+        }
+
+        // --- STAGE 5: MUSIC PLAYER ---
+        const songs = [
+            { title: "Dil Cheez Tujhe Dedi", artist: "You Queen", src: "audio/Dil cheez tujhe dedi.mp3" , art: "image/hello kitty-spiderman1.jpeg" },
+            { title: "Sahiba", artist: "Lo-Fi Heart", src: "audio/Sahiba.mp3", art: "image/hello kitty-spiderman2.jpeg" },
+            { title: "Heeriye", artist: "Beautiful Heart", src: "audio/Heeriye.mp3", art: "image/hello kitty-spiderman3.jpeg" },
+            { title: "Fakira", artist: "Timeless Romance", src: "audio/Fakira.mp3" , art: "image/hello kitty-spiderman4.jpeg" },
+            { title: "Ishq Wala Love", artist: "Eternal love", src: "audio/Ishq Wala Love.mp3", art: "image/hello kitty-spiderman5.jpeg" },
+            { title: "Dil Ka Jo Haal", artist: "Unforgettable", src: "audio/Dil Ka Jo Haal.mp3", art: "image/hello kitty-spiderman6.jpeg" }
+        ];
+        let currentSongIdx = 0;
+        let isPlaying = false;
+        let progressInt;
+        let currentCarouselPage = 0;
+        const cardsPerPage = 3;
+
+        function selectSong(index) {
+            currentSongIdx = index;
+            updatePlayerUI();
+            isPlaying = true;
+            togglePlay(true); // Force play
+        }
+
+        function nextSong() {
+            currentSongIdx = (currentSongIdx + 1) % songs.length;
+            updateCarousel();
+            selectSong(currentSongIdx);
+        }
+
+        function prevSong() {
+            currentSongIdx = (currentSongIdx - 1 + songs.length) % songs.length;
+            updateCarousel();
+            selectSong(currentSongIdx);
+        }
+
+        function updateCarousel() {
+            const totalPages = Math.ceil(songs.length / cardsPerPage);
+            currentCarouselPage = Math.floor(currentSongIdx / cardsPerPage);
+
+            document.querySelectorAll('.mini-card').forEach((card, index) => {
+                const cardPage = Math.floor(index / cardsPerPage);
+                if (cardPage === currentCarouselPage) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        function updatePlayerUI() {
+            const song = songs[currentSongIdx];
+            document.getElementById('songTitle').innerText = song.title;
+            document.getElementById('songArtist').innerText = song.artist;
+            document.getElementById('mainArt').style.backgroundImage = `url('${song.art}')`;
+            
+            // Update Mini Cards Active State
+            document.querySelectorAll('.mini-card').forEach((c, i) => {
+                if(i === currentSongIdx) c.classList.add('active');
+                else c.classList.remove('active');
+            });
+        }
+
+        function togglePlay(forcePlay = null) {
+            const btn = document.querySelector('.play-btn-main');
+            const art = document.getElementById('mainArt');
+            const audio = document.getElementById('birthdayAudio');
+
+            if (!btn || !art || !audio) return;
+
+            if (forcePlay === true) isPlaying = true;
+            else if (forcePlay === false) isPlaying = false;
+            else isPlaying = !isPlaying;
+
+            if (isPlaying) {
+                try {
+                    const song = songs[currentSongIdx];
+                    audio.src = song.src;
+                    audio.play().catch(e => console.warn('Audio play failed:', e));
+                    btn.innerText = "⏸";
+                    art.classList.add('playing');
+                } catch (e) {
+                    console.warn('Error playing audio:', e);
+                }
+            } else {
+                try {
+                    audio.pause();
+                    btn.innerText = "▶";
+                    art.classList.remove('playing');
+                } catch (e) {
+                    console.warn('Error pausing audio:', e);
+                }
+            }
+        }
+
+        function updateProgress() {
+            const audio = document.getElementById('birthdayAudio');
+            const bar = document.getElementById('mainProgressBar');
+            if (audio.duration) {
+                const progress = (audio.currentTime / audio.duration) * 100;
+                bar.style.width = progress + '%';
+            }
+        }
+
+        function seekAudio(event) {
+            const audio = document.getElementById('birthdayAudio');
+            const progressContainer = document.querySelector('.main-progress-container');
+            const rect = progressContainer.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const width = rect.width;
+            const seekTime = (clickX / width) * audio.duration;
+            audio.currentTime = seekTime;
+        }
+        
+        function startMusicPreview() {
+            selectSong(0); // Auto select first song visual
+            updateCarousel(); // Initialize carousel visibility
+            togglePlay(false); // Don't auto play audio/visuals yet
+
+            // Set up audio event listeners
+            const audio = document.getElementById('birthdayAudio');
+            const progressContainer = document.querySelector('.main-progress-container');
+
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('ended', nextSong);
+            progressContainer.addEventListener('click', seekAudio);
+        }
+
+        // --- STAGE 6: CARDS PROGRESS ---
+        let flippedCount = 0;
+        function flipCard(card) {
+            if (!card.classList.contains('flipped')) {
+                card.classList.add('flipped');
+                flippedCount++;
+                updateCardProgress();
+                
+                if (flippedCount === 3) {
+                    setTimeout(() => {
+                        document.getElementById('cardModal').classList.add('show');
+                        
+                    }, 1000);
+                }
+            }
+        }
+
+        function updateCardProgress() {
+            const bar = document.getElementById('cardProgress');
+            const text = document.getElementById('cardProgressText');
+            const pct = (flippedCount / 3) * 100;
+            bar.style.width = pct + '%';
+            text.innerText = `${flippedCount} of 3 birthday wishes unlocked! Keep going🎉`;
+        }
+
+        // --- STAGE 7: FINAL ---
+        function sealLetter() {
+            const content = document.getElementById('final-main-content');
+            const sealed = document.getElementById('sealedContent');
+            
+            content.style.opacity = '0';
+            content.style.transition = 'opacity 0.5s';
+            
+            setTimeout(() => {
+                content.style.display = 'none';
+                sealed.style.display = 'flex';
+                launchConfetti();
+            }, 500);
+        }
+
+        function sendKisses() {
+            for(let i=0; i<50; i++) {
+                setTimeout(() => {
+                    const k = document.createElement('div');
+                    k.innerText = '💋';
+                    k.style.position = 'fixed';
+                    k.style.left = Math.random()*100 + 'vw';
+                    k.style.bottom = '-50px';
+                    k.style.fontSize = (Math.random()*30 + 20) + 'px';
+                    k.style.transition = `bottom ${Math.random()*2+2}s ease-out, opacity 3s`;
+                    k.style.zIndex = 200;
+                    document.body.appendChild(k);
+
+                    setTimeout(() => {
+                        k.style.bottom = '100vh';
+                        k.style.opacity = '0';
+                    }, 100);
+
+                    setTimeout(() => k.remove(), 4000);
+                }, i * 20); // Stagger creation by 20ms intervals
+            }
+        }
+
+    </script>
+</body>
+</html>
